@@ -31,6 +31,8 @@ users:
   admin: secretPassword
 ```
 
+All requests incoming on port 8000 will be forwarded to one of the backends.
+
 # Running
 
 `./bin/backflow`
@@ -42,15 +44,15 @@ Changes are applied dynamically without restarting the server.
 
 ## Add a new backend
 
-`curl http://localhost/lb -XPOST -d 'http://new.backend.example.com'`
+`curl -uadmin:secretPassword http://localhost:8000/lb -XPOST -d 'http://new.backend.example.com'`
 
 ## Remove an existing
 
-`curl http://localhost/lb -XDELETE -d 'http://some.backend.example.com'`
+`curl -uadmin:secretPassword http://localhost:8000/lb -XDELETE -d 'http://some.backend.example.com'`
 
 ## List current backends
 
-`curl http://localhost/lb`
+`curl -uadmin:secretPassword http://localhost:8000/lb`
 
 # Build from source
 
