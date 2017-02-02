@@ -26,6 +26,9 @@ server:
   keystore: /path/to/keystore.jks
   keystorePassword: secret
 
+# Users for accesing the API
+users:
+  admin: secretPassword
 ```
 
 # Running
