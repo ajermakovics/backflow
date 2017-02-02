@@ -1,0 +1,4 @@
+server:
+  port: 8080
+  backends: http://127.0.0.1:9090
+  maxRequestTime: 30

@@ -1,0 +1,15 @@
+server:
+  port: 8000
+  backends: http://127.0.0.1:8090 http://127.0.0.1:8091
+  maxRequestTime: -1
+  ioThread: 4
+  backlog: 1000
+  rewriteHostHeader: false
+  reuseXForwarded: true
+  connectionsPerThread: 20
+  # workerThreads: 16 # default: Runtime.getRuntime().availableProcessors()*8
+  # workerTaskMaxThreads : 16 # default: workerThreads
+  # sslPort: 8443
+  # keystore: /path/to/keystore.jks
+  # keystorePassword: secret
+

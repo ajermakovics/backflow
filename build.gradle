@@ -1,0 +1,44 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.ajoberstar:grgit:1.4.+'
+	}
+}
+ext {
+	git = org.ajoberstar.grgit.Grgit.open()
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+version ext.git.describe() ?: 'dev'
+mainClassName = "backflow.ProxyServer"
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	compile 'io.undertow:undertow-core:1.3.23.Final'
+	compile 'org.mortbay.jetty.alpn:alpn-boot:8.1.3.v20150130'
+	compile 'org.yaml:snakeyaml:1.17'
+	compile 'org.andrejs:json:1.0.0'
+
+	testCompile 'junit:junit:4.11'
+	testCompile 'io.rest-assured:rest-assured:3.0.2'
+}
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': project.name, 'Implementation-Version': version
+		attributes "Main-Class": mainClassName
+		attributes 'Class-Path': configurations.runtime.collect { it.name }.join(' ')
+	}
+}
+
+startScripts {
+	classpath = files('$APP_HOME/lib/' + jar.archiveName)
+}
