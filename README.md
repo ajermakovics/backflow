@@ -1,6 +1,6 @@
 # Backflow
 
-A load balancing reverse proxy server
+A load balancing reverse proxy server with an API. Supports adding/removing backends on-the-fly without restarts. 
 
 # Install
 
@@ -31,6 +31,19 @@ server:
 # Running
 
 `./bin/backflow`
+
+# API
+
+Backflow has a HTTP based API to add/remove backends.
+Changes are applied dynamically without restarting the server.
+
+## Add
+
+`curl http://localhost/lb -XPOST -d 'http://new.backend.example.com'`
+
+## Remove
+
+`curl http://localhost/lb -XDELETE -d 'http://some.backend.example.com'`
 
 # Build from source
 
