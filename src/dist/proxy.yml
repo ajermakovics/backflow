@@ -13,3 +13,6 @@ server:
   # keystore: /path/to/keystore.jks
   # keystorePassword: secret
 
+# Users for interacting with the API
+users:
+  admin: secretPassword

@@ -12,6 +12,7 @@ ext {
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'maven'
 
 version ext.git.describe() ?: 'dev'
 mainClassName = "backflow.ProxyServer"

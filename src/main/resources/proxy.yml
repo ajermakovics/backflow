@@ -13,3 +13,5 @@ server:
   # keystore: /path/to/keystore.jks
   # keystorePassword: secret
 
+users:
+  admin: secret

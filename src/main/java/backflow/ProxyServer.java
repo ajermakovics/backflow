@@ -10,13 +10,7 @@ import org.andrejs.json.Json;
 import org.jboss.logging.Logger;
 import org.xnio.Options;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyStore;
 
 import static backflow.ProxyConfig.loadConfig;
@@ -24,16 +18,19 @@ import static backflow.ProxyConfig.loadConfig;
 public class ProxyServer {
 
     private static final Logger log = Logger.getLogger(ProxyServer.class.getSimpleName());
+
     private Undertow undertow;
+    private final Json config;
+
+    public ProxyServer(Json config) {
+        this.config = config;
+    }
 
     public static void main(final String[] args) throws Exception {
-        new ProxyServer().start();
+        new ProxyServer(loadConfig()).start();
     }
 
     public void start() throws Exception {
-
-        Json config = loadConfig();
-
         Json serverConfig = config.at("server");
         String host = serverConfig.get("host", "0.0.0.0");
         String backends = serverConfig.get("backends", "");
@@ -50,7 +47,8 @@ public class ProxyServer {
         LoadBalancingProxyClient loadBalancer = new LoadBalancingProxyClient()
                     .setConnectionsPerThread(connectionsPerThread);
 
-        HttpHandler loadBalancerApi = new BalancerHandler(loadBalancer, backends.split("\\s+"));
+        Json users = config.at("users");
+        HttpHandler loadBalancerApi = new BasicAuthHandler(users, new BalancerHandler(loadBalancer, backends.split("\\s+")));
         ProxyHandler proxyHandler = new ProxyHandler(loadBalancer, maxRequestTime, ResponseCodeHandler.HANDLE_404, rewriteHostHeader, reuseXForwarded);
 
         HttpHandler handler = Handlers.path()
@@ -68,8 +66,8 @@ public class ProxyServer {
         if(serverConfig.containsKey("sslPort")) {
             int sslPort = Integer.parseInt(serverConfig.get("sslPort", "443"));
             String keystorePassword = serverConfig.get("keystorePassword", "");
-            KeyStore keyStore = loadKeyStore(serverConfig.get("keystore", ""), keystorePassword);
-            SSLContext sslContext = newSslContext(keyStore, keystorePassword);
+            KeyStore keyStore = UndertowHelpers.loadKeyStore(serverConfig.get("keystore", ""), keystorePassword);
+            SSLContext sslContext = UndertowHelpers.newSslContext(keyStore, keystorePassword);
             proxyBuilder.addHttpsListener(sslPort, host, sslContext);
         }
 
@@ -80,29 +78,6 @@ public class ProxyServer {
 
     public void stop() {
         undertow.stop();
-    }
-
-    private static SSLContext newSslContext(final KeyStore keyStore, String keyStorePw) throws Exception {
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, keyStorePw.toCharArray());
-        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(keyManagers, new TrustManager[]{}, null);
-
-        return sslContext;
-    }
-
-    private static KeyStore loadKeyStore(String storeLoc, String storePw) throws Exception {
-        InputStream stream = Files.newInputStream(Paths.get(storeLoc));
-        if(stream == null) {
-            throw new IllegalArgumentException("Could not load keystore");
-        }
-        try(InputStream is = stream) {
-            KeyStore loadedKeystore = KeyStore.getInstance("JKS");
-            loadedKeystore.load(is, storePw.toCharArray());
-            return loadedKeystore;
-        }
     }
 
 }

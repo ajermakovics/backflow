@@ -5,4 +5,5 @@ target/*
 build/
 *.jar
 bin/
+.DS_Store
 
