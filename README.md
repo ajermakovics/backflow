@@ -37,13 +37,17 @@ server:
 Backflow has a HTTP based API to add/remove backends.
 Changes are applied dynamically without restarting the server.
 
-## Add
+## Add a new backend
 
 `curl http://localhost/lb -XPOST -d 'http://new.backend.example.com'`
 
-## Remove
+## Remove an existing
 
 `curl http://localhost/lb -XDELETE -d 'http://some.backend.example.com'`
+
+## List current backends
+
+`curl http://localhost/lb`
 
 # Build from source
 
