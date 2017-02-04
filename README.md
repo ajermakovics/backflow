@@ -1,4 +1,4 @@
-# Backflow
+# Backflow [![CircleCI](https://circleci.com/gh/ajermakovics/backflow.svg?style=svg)](https://circleci.com/gh/ajermakovics/backflow) [![Release](https://img.shields.io/github/release/ajermakovics/backflow.svg?colorB=green)](https://github.com/ajermakovics/backflow/releases)
 
 A load balancing reverse proxy server with an API. Supports adding/removing backends on-the-fly without restarts. 
 
