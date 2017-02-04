@@ -57,6 +57,8 @@ Changes are applied dynamically without restarting the server.
 # Build from source
 
 `./gradlew distZip`
+or
+`./gradlew distTar`
 
 # License
 
