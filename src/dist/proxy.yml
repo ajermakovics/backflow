@@ -1,5 +1,6 @@
 server:
-  port: 8000
+  port: 8000 # (optional if using sslPort)
+  host: 0.0.0.0 # (optional)
   backends: http://127.0.0.1:8090 http://127.0.0.1:8091
   maxRequestTime: -1
   ioThread: 4
@@ -7,11 +8,11 @@ server:
   rewriteHostHeader: false
   reuseXForwarded: true
   connectionsPerThread: 20
-  # workerThreads: 16 # default: Runtime.getRuntime().availableProcessors()*8
-  # workerTaskMaxThreads : 16 # default: workerThreads
-  # sslPort: 8443
-  # keystore: /path/to/keystore.jks
-  # keystorePassword: secret
+#  sslPort: 8443
+#  keystore: /path/to/keystore.jks
+#  keystorePassword: secret
+#  workerThreads: 16 # default: Runtime.getRuntime().availableProcessors()*8
+#  workerTaskMaxThreads : 16 # default: workerThreads
 
 # Users for interacting with the API
 users:

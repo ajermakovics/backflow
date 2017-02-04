@@ -17,6 +17,8 @@ apply plugin: 'maven'
 version ext.git.describe() ?: 'dev'
 mainClassName = "backflow.ProxyServer"
 
+println "Version: ${version}"
+
 repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }

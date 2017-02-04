@@ -56,24 +56,28 @@ public class ProxyServer {
                 .addPrefixPath("/", proxyHandler);
 
         Undertow.Builder proxyBuilder = Undertow.builder()
-                .addHttpListener(port, host)
                 .setIoThreads(ioThreads)
                 .setWorkerThreads(workerThreads)
                 .setWorkerOption(Options.WORKER_TASK_MAX_THREADS, workerTaskMaxThreads)
                 .setSocketOption(Options.BACKLOG, backlog)
                 .setHandler(handler);
 
+        if(serverConfig.containsKey("port")) {
+            proxyBuilder.addHttpListener(port, host);
+            log.info("Started proxy on " + host + ":" + port);
+        }
+
         if(serverConfig.containsKey("sslPort")) {
-            int sslPort = Integer.parseInt(serverConfig.get("sslPort", "443"));
+            int sslPort = serverConfig.get("sslPort", 443);
             String keystorePassword = serverConfig.get("keystorePassword", "");
             KeyStore keyStore = UndertowHelpers.loadKeyStore(serverConfig.get("keystore", ""), keystorePassword);
             SSLContext sslContext = UndertowHelpers.newSslContext(keyStore, keystorePassword);
             proxyBuilder.addHttpsListener(sslPort, host, sslContext);
+            log.info("Started SSL proxy on " + host + ":" + sslPort);
         }
 
         this.undertow = proxyBuilder.build();
         undertow.start();
-        log.info("Started proxy on " + host + ":" + port);
     }
 
     public void stop() {
